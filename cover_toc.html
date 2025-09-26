@@ -54,11 +54,34 @@
         font-size: 24px;
         transition: all 0.3s ease;
         border: 1px solid rgba(255, 255, 255, 0.2);
+        cursor: pointer;
+        text-decoration: none;
+        color: #fff;
+        display: inline-block;
       }
       .category:hover {
         transform: translateY(-5px);
         background-color: rgba(255, 255, 255, 0.2);
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      }
+      .navigation {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        display: flex;
+        gap: 10px;
+      }
+      .nav-button {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 5px;
+        padding: 8px 15px;
+        color: #fff;
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+      .nav-button:hover {
+        background-color: rgba(255, 255, 255, 0.2);
       }
     </style>
   </head>
@@ -68,16 +91,21 @@
         <h1 class="title">미드저니 Sref 모음</h1>
         
         <div class="logo-container">
-          <img src="/home/ubuntu/midjourney_sref_gallery/midjourney_logo.png" alt="Midjourney Logo" class="logo">
+          <img src="midjourney_logo.png" alt="Midjourney Logo" class="logo">
         </div>
         
         <div class="categories">
-          <div class="category">애니</div>
-          <div class="category">실사</div>
-          <div class="category">SF</div>
-          <div class="category">판타지</div>
-          <div class="category">느와르/스릴러</div>
-          <div class="category">기타</div>
+          <a href="anime_page1.html" class="category">애니</a>
+          <a href="real_page1.html" class="category">실사</a>
+          <a href="sf_page1.html" class="category">SF</a>
+          <a href="fantasy_page1.html" class="category">판타지</a>
+          <a href="noir_page1.html" class="category">느와르/스릴러</a>
+          <a href="etc_page1.html" class="category">기타</a>
+        </div>
+        
+        <div class="navigation">
+          <a href="index.html" class="nav-button">홈으로</a>
+          <a href="anime_page1.html" class="nav-button">다음</a>
         </div>
       </div>
     </div>
