@@ -1,7 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Section, Category, ImageGroup, ImageItem } from './types';
 import { ImageCard } from './components/ImageCard';
 import { AddCategoryModal } from './components/AddCategoryModal';
+import { ImageModal } from './components/ImageModal';
+import { SaveIcon, UploadIcon } from './components/icons';
 
 const createNewImageItem = (): ImageItem => ({
   id: crypto.randomUUID(),
@@ -35,10 +37,54 @@ const INITIAL_STATE: Section[] = [
 ];
 
 const App: React.FC = () => {
-  const [sections, setSections] = useState<Section[]>(INITIAL_STATE);
-  const [activeSectionId, setActiveSectionId] = useState<string>(INITIAL_STATE[0].id);
-  const [activeCategoryId, setActiveCategoryId] = useState<string>(INITIAL_STATE[0].categories[0].id);
+  const [sections, setSections] = useState<Section[]>(() => {
+    try {
+      const savedData = localStorage.getItem('junnySrefData');
+      return savedData ? JSON.parse(savedData) : INITIAL_STATE;
+    } catch {
+      return INITIAL_STATE;
+    }
+  });
+
+  const [activeSectionId, setActiveSectionId] = useState<string>(
+    () => localStorage.getItem('junnySrefActiveSectionId') || INITIAL_STATE[0].id
+  );
+
+  const [activeCategoryId, setActiveCategoryId] = useState<string>(
+    () => localStorage.getItem('junnySrefActiveCategoryId') || INITIAL_STATE[0].categories[0].id
+  );
+  
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Auto-save to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('junnySrefData', JSON.stringify(sections));
+      localStorage.setItem('junnySrefActiveSectionId', activeSectionId);
+      localStorage.setItem('junnySrefActiveCategoryId', activeCategoryId);
+    } catch (error) {
+      console.error("Failed to save data to localStorage", error);
+    }
+  }, [sections, activeSectionId, activeCategoryId]);
+
+  // Validate active IDs on data change
+  useEffect(() => {
+    const currentSection = sections.find(s => s.id === activeSectionId);
+    if (!currentSection) {
+      const firstSectionId = sections[0]?.id;
+      if (firstSectionId) {
+        setActiveSectionId(firstSectionId);
+        setActiveCategoryId(sections[0].categories[0]?.id || '');
+      }
+    } else {
+      const currentCategory = currentSection.categories.find(c => c.id === activeCategoryId);
+      if (!currentCategory) {
+        setActiveCategoryId(currentSection.categories[0]?.id || '');
+      }
+    }
+  }, [sections, activeSectionId]);
 
   const activeSection = sections.find(s => s.id === activeSectionId);
   const activeCategory = activeSection?.categories.find(c => c.id === activeCategoryId);
@@ -48,6 +94,8 @@ const App: React.FC = () => {
     const newSection = sections.find(s => s.id === sectionId);
     if (newSection && newSection.categories.length > 0) {
       setActiveCategoryId(newSection.categories[0].id);
+    } else {
+      setActiveCategoryId('');
     }
   };
 
@@ -110,12 +158,97 @@ const App: React.FC = () => {
     }));
   }, [activeSectionId, activeCategoryId]);
 
+  const handleSaveToFile = () => {
+    try {
+        const dataStr = JSON.stringify(sections, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        const timestamp = new Date().toISOString().slice(0, 19).replace('T', '_').replace(/:/g, '-');
+        link.download = `junny-sref-data_${timestamp}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error("Failed to save data to file", error);
+        alert("데이터 저장에 실패했습니다.");
+    }
+  };
+
+  const handleLoadFromFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const text = e.target?.result;
+            if (typeof text !== 'string') throw new Error("File is not text");
+            const loadedData = JSON.parse(text);
+
+            if (Array.isArray(loadedData)) {
+                setSections(loadedData);
+                // Reset active IDs to default for the new data
+                const firstSection = loadedData[0];
+                if (firstSection) {
+                    setActiveSectionId(firstSection.id);
+                    setActiveCategoryId(firstSection.categories[0]?.id || '');
+                }
+                alert("데이터를 성공적으로 불러왔습니다.");
+            } else {
+                throw new Error("Invalid data structure in file");
+            }
+        } catch (error) {
+            console.error("Failed to load data from file", error);
+            alert("파일을 불러오는데 실패했습니다. 유효한 JSON 파일인지 확인해주세요.");
+        } finally {
+            if (fileInputRef.current) {
+                fileInputRef.current.value = "";
+            }
+        }
+    };
+    reader.readAsText(file);
+  };
+
+  const handleImageClick = (imageUrl: string) => {
+    if (imageUrl) {
+        setSelectedImageUrl(imageUrl);
+    }
+  };
+
   return (
     <div className="min-h-screen text-slate-300 p-4 sm:p-6 md:p-8">
-      <header className="text-center mb-8">
+      <header className="relative text-center mb-8">
         <h1 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
           JUNNY Sref 모음
         </h1>
+        <div className="absolute top-0 right-0 flex items-center gap-2 sm:gap-3">
+            <button
+                onClick={handleSaveToFile}
+                className="flex items-center justify-center px-3 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold transition-colors text-sm"
+                title="데이터를 파일로 저장"
+            >
+                <SaveIcon className="w-5 h-5 sm:mr-2" />
+                <span className="hidden sm:inline">저장하기</span>
+            </button>
+            <button
+                onClick={() => fileInputRef.current?.click()}
+                className="flex items-center justify-center px-3 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold transition-colors text-sm"
+                title="파일에서 데이터 불러오기"
+            >
+                <UploadIcon className="w-5 h-5 sm:mr-2" />
+                <span className="hidden sm:inline">불러오기</span>
+            </button>
+            <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleLoadFromFile}
+                accept="application/json"
+                className="hidden"
+            />
+        </div>
       </header>
 
       <nav className="flex justify-center mb-6 border-b border-slate-700">
@@ -175,6 +308,7 @@ const App: React.FC = () => {
                         key={item.id} 
                         item={item} 
                         onUpdate={(field, value) => handleUpdate(group.id, item.id, field, value)}
+                        onImageClick={handleImageClick}
                       />
                     ))}
                   </div>
@@ -199,6 +333,10 @@ const App: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onAdd={handleAddCategory}
+      />
+      <ImageModal 
+        imageUrl={selectedImageUrl}
+        onClose={() => setSelectedImageUrl(null)}
       />
     </div>
   );

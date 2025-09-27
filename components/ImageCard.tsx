@@ -5,9 +5,10 @@ import { ImageIcon } from './icons';
 interface ImageCardProps {
     item: ImageItem;
     onUpdate: (field: 'imageUrl' | 'code', value: string | null) => void;
+    onImageClick: (imageUrl: string) => void;
 }
 
-export const ImageCard: React.FC<ImageCardProps> = ({ item, onUpdate }) => {
+export const ImageCard: React.FC<ImageCardProps> = ({ item, onUpdate, onImageClick }) => {
     const [isDragging, setIsDragging] = useState(false);
 
     const handleFile = useCallback((file: File) => {
@@ -61,10 +62,16 @@ export const ImageCard: React.FC<ImageCardProps> = ({ item, onUpdate }) => {
             >
                 {item.imageUrl ? (
                     <>
-                        <img src={item.imageUrl} alt="Uploaded content" className="w-full h-full object-cover" />
+                        <button 
+                            onClick={() => onImageClick(item.imageUrl!)}
+                            className="w-full h-full block focus:outline-none"
+                            aria-label="View larger image"
+                        >
+                          <img src={item.imageUrl} alt="Uploaded content" className="w-full h-full object-cover" />
+                        </button>
                          <button 
                             onClick={() => onUpdate('imageUrl', null)}
-                            className="absolute top-2 right-2 bg-black/50 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="absolute top-2 right-2 bg-black/50 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity focus:outline-none focus:ring-2 focus:ring-white"
                             aria-label="Remove image"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
