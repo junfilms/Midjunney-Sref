@@ -1,100 +1,24 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>미드저니 Sref 모음</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <style>
-    body {
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-      color: #fff;
-      font-family: 'Arial', sans-serif;
-      min-height: 100vh;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2rem;
-    }
-    .title {
-      font-size: 3rem;
-      font-weight: bold;
-      margin-bottom: 1.5rem;
-      text-align: center;
-      background: linear-gradient(90deg, #ff6b6b, #a685e2);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .subtitle {
-      font-size: 1.5rem;
-      text-align: center;
-      margin-bottom: 3rem;
-      opacity: 0.8;
-    }
-    .btn {
-      display: inline-block;
-      background: linear-gradient(90deg, #ff6b6b, #a685e2);
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border-radius: 0.5rem;
-      font-weight: bold;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      margin-bottom: 1rem;
-    }
-    .btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    }
-    .logo {
-      width: 150px;
-      height: auto;
-      margin: 0 auto 2rem;
-      display: block;
-    }
-  </style>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JUNNY Sref 모음</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "react": "https://aistudiocdn.com/react@^19.1.1"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
 </head>
-<body>
-  <div class="container">
-    <img src="midjourney_logo.png" alt="Midjourney Logo" class="logo">
-    <h1 class="title">미드저니 Sref 모음</h1>
-    <p class="subtitle">이미지 갤러리 프레젠테이션</p>
-    
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div class="bg-opacity-10 bg-white p-6 rounded-lg">
-        <h2 class="text-xl font-bold mb-4">시작하기</h2>
-        <a href="cover_toc.html" class="btn w-full text-center">프레젠테이션 시작</a>
-        <p class="text-sm mt-4 opacity-70">표지 및 목차 페이지부터 시작합니다.</p>
-      </div>
-      
-      <div class="bg-opacity-10 bg-white p-6 rounded-lg">
-        <h2 class="text-xl font-bold mb-4">카테고리별 바로가기</h2>
-        <div class="space-y-2">
-          <a href="anime_page1.html" class="btn w-full text-center">애니</a>
-          <a href="real_page1.html" class="btn w-full text-center">실사</a>
-          <a href="sf_page1.html" class="btn w-full text-center">SF</a>
-          <a href="fantasy_page1.html" class="btn w-full text-center">판타지</a>
-          <a href="noir_page1.html" class="btn w-full text-center">느와르/스릴러</a>
-          <a href="etc_page1.html" class="btn w-full text-center">기타</a>
-          <a href="custom_category.html" class="btn w-full text-center">사용자 정의 카테고리</a>
-        </div>
-      </div>
-      
-      <div class="bg-opacity-10 bg-white p-6 rounded-lg">
-        <h2 class="text-xl font-bold mb-4">사용 방법</h2>
-        <ul class="list-disc pl-5 space-y-2 opacity-80">
-          <li>각 페이지에서 텍스트 박스에 3~4줄 정도의 문장을 입력할 수 있습니다.</li>
-          <li>이미지 카드에 이미지를 드래그하거나 붙여넣기 할 수 있습니다.</li>
-          <li>이미지 카드 아래 빈 칸에 코드를 입력할 수 있습니다.</li>
-          <li>페이지 간 이동은 브라우저의 뒤로/앞으로 버튼을 사용하세요.</li>
-        </ul>
-      </div>
-    </div>
-    
-    <div class="mt-12 text-center opacity-70 text-sm">
-      <p>© 2025 미드저니 Sref 모음 갤러리</p>
-    </div>
-  </div>
-</body>
+  <body class="bg-slate-900">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
 </html>
